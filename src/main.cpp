@@ -3,12 +3,10 @@
 int main(int argc, char* argv[])
 {
 	VulkanEngine engine;
-
-	engine.init();	
-	
-	engine.run();	
-
-	engine.cleanup();	
+	engine.InitVulkan();
+	engine.Init();	
+	engine.Run();	
+	engine.Cleanup();	
 
 	return 0;
 }
