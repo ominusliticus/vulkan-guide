@@ -5,9 +5,12 @@
 
 #include <vk_types.h>
 #include <vk_initializers.h>
+
 #include <vector>
+#include <functional>
 
 #include <vk_pipeline.h>
+#include <deletion_queue.h>
 
 class VulkanEngine {
 public:
@@ -57,11 +60,21 @@ public:
     // Grahics pipeline necessities
     VkPipelineLayout    _triangle_pipeline_layout;
     VkPipeline          _triangle_pipeline;
+    VkPipeline          _colored_triangle_pipeline;
+
+    // Memory allocation for vertex allocation
+    VmaAllocator _allocator;
+
+    // Queue for destruction calls
+    DeletionQueue _main_deletion_queue;
 
     // Bool for successful initialization
     bool _isInitialized{ false };
 
     int _frame_number {0};
+
+    // For toggling between shaders
+    int _selected_shader;
 
 private:
     void InitVulkan();
