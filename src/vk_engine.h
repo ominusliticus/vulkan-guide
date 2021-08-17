@@ -7,58 +7,68 @@
 #include <vk_initializers.h>
 #include <vector>
 
+#include <vk_pipeline.h>
+
 class VulkanEngine {
 public:
-	// Core functionality
-	void Init();	// initializes everything in the engine
-	void Cleanup();	// shuts down the engine
-	void Draw();	// draw loop
-	void Run();		// run main loop
+    // Core functionality
+    void Init();	// initializes everything in the engine
+    void Cleanup();	// shuts down the engine
+    void Draw();	// draw loop
+    void Run();		// run main loop
 
-	// Vulkan API main interface
-	VkInstance					_instance;			// Vulkan library Handle
-	VkDebugUtilsMessengerEXT	_debug_messenger;	// Vulkan debug output
-	VkPhysicalDevice			_chosenGPU;			// GPU chosen as the default device
-	VkDevice					_device;			// Vulkan device for commands
-	VkSurfaceKHR				_surface;			// Vulkan window surface
-	
-	// Window object
-	VkExtent2D			_window_extent{ 1700 , 900 };	// Window dimensions
-	struct SDL_Window*	_window{ nullptr };
+    // Shader Code
+    bool LoadShaderModule(const char* file_path, VkShaderModule* out_shader_module);
 
-	// Swapchain functionality
-	VkSwapchainKHR				_swapchain;					// Swap chain variable
-	VkFormat					_swapchain_imagine_format;	// Image format expected from windowing system
-	std::vector<VkImage>		_swapchain_images;			// Array for images in swapchain
-	std::vector<VkImageView>	_swapchain_image_views;		// Array for image views in swapchain
+    // Vulkan API main interface
+    VkInstance					_instance;			// Vulkan library Handle
+    VkDebugUtilsMessengerEXT	_debug_messenger;	// Vulkan debug output
+    VkPhysicalDevice			_chosenGPU;			// GPU chosen as the default device <--- edit
+    VkDevice					_device;			// Vulkan device for commands
+    VkSurfaceKHR				_surface;			// Vulkan window surface
+    
+    // Window object
+    VkExtent2D			_window_extent{ 1700 , 900 };	// Window dimensions
+    struct SDL_Window*	_window{ nullptr };
 
-	// Command Pool and Buffer
-	VkCommandPool	_command_pool;		
-	VkCommandBuffer	_command_buffer;	// Stores functions calls passed to GPU
+    // Swapchain functionality
+    VkSwapchainKHR				_swapchain;					// Swap chain variable
+    VkFormat					_swapchain_imagine_format;	// Image format expected from windowing system
+    std::vector<VkImage>		_swapchain_images;			// Array for images in swapchain
+    std::vector<VkImageView>	_swapchain_image_views;		// Array for image views in swapchain
 
-	// GPU Queues
-	VkQueue		_graphics_queue;		// Queue to submit rendering calls to
-	uint32_t	_graphics_queue_family;	// Keeps track which family of queues we are submitting to
+    // Command Pool and Buffer
+    VkCommandPool	_command_pool;		
+    VkCommandBuffer	_command_buffer;	// Stores functions calls passed to GPU
 
-	// VkRenderPass 
-	VkRenderPass				_render_pass;	// For organizing function calls and image data passed to graphics queue
-	std::vector<VkFramebuffer>	_frame_buffers;	// Contains organized images
+    // GPU Queues
+    VkQueue		_graphics_queue;		// Queue to submit rendering calls to
+    uint32_t	_graphics_queue_family;	// Keeps track which family of queues we are submitting to
 
-	// GPU Synchronoization 
-	VkSemaphore _present_semaphore;
-	VkSemaphore _render_semaphore;
-	VkFence		_render_fence;
+    // VkRenderPass 
+    VkRenderPass				_render_pass;	// For organizing function calls and image data passed to graphics queue
+    std::vector<VkFramebuffer>	_frame_buffers;	// Contains organized images
 
-	// Bool for successful initialization
-	bool _isInitialized{ false };
+    // GPU Synchronoization 
+    VkSemaphore _present_semaphore;
+    VkSemaphore _render_semaphore;
+    VkFence		_render_fence;
 
-	int _frame_number {0};
+    // Grahics pipeline necessities
+    VkPipelineLayout    _triangle_pipeline_layout;
+    VkPipeline          _triangle_pipeline;
+
+    // Bool for successful initialization
+    bool _isInitialized{ false };
+
+    int _frame_number {0};
 
 private:
-	void InitVulkan();
-	void InitSwapchain();
-	void InitCommands();
-	void InitDefaultRenderPass();
-	void InitFrameBuffers();
-	void InitSyncStructure();
+    void InitVulkan();
+    void InitSwapchain();
+    void InitCommands();
+    void InitDefaultRenderPass();
+    void InitFrameBuffers();
+    void InitSyncStructure();		// Initializes semaphores and fences for GPU synchronization
+    void InitPipeLines();			// Initializes pipelines for objects we want to render
 };
