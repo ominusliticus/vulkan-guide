@@ -133,7 +133,7 @@ void VulkanEngine::Draw()
 
     vkCmdBindPipeline(_command_buffer, VK_PIPELINE_BIND_POINT_GRAPHICS, _mesh_pipeline);
     VkDeviceSize offset = 0;
-    vkCmdBindVertexBuffers(_command_buffer, 0, 1, &_triangle_mesh.vertex_buffer.buffer, &offset);
+    vkCmdBindVertexBuffers(_command_buffer, 0, 1, &_monkey_mesh.vertex_buffer.buffer, &offset);
 
     // Define push constants
     glm::vec3 camera_position{ 0.0f, 0.0f, -2.0f };
@@ -149,7 +149,7 @@ void VulkanEngine::Draw()
 
     // Send push constants to GPU
     vkCmdPushConstants(_command_buffer, _mesh_pipeline_layout, VK_SHADER_STAGE_VERTEX_BIT, 0, sizeof(MeshPushConstants), &push_constants);
-    vkCmdDraw(_command_buffer, _triangle_mesh.vertices.size(), 1, 0, 0);
+    vkCmdDraw(_command_buffer, _monkey_mesh.vertices.size(), 1, 0, 0);
 
     // End rendering pass
     vkCmdEndRenderPass(_command_buffer);
@@ -268,6 +268,8 @@ void VulkanEngine::InitVulkan()
     allocator_info.device           = _device;
     allocator_info.instance         = _instance;
     vmaCreateAllocator(&allocator_info, &_allocator);
+
+    _main_deletion_queue.PushFunction([&]() {vmaDestroyAllocator(_allocator); });
 }
 
 // .....oooOO0OOooo.....oooOO0OOooo.....oooOO0OOooo.....oooOO0OOooo.....oooOO0OOooo.....
@@ -507,19 +509,9 @@ void VulkanEngine::InitPipeLines()
 
 void VulkanEngine::LoadMeshes()
 {
-    _triangle_mesh.vertices.resize(3);
+    _monkey_mesh.LoadFromObj("../../assets/monkey_smooth.obj");
 
-    // vertex positions
-    _triangle_mesh.vertices[0].position = { 1.0f, 1.0f, 0.0f };
-    _triangle_mesh.vertices[1].position = { -1.0f, 1.0f, 0.0f };
-    _triangle_mesh.vertices[2].position = { 0.0f, -1.0f, 0.0f };
-
-    // vertex colors (all green)
-    _triangle_mesh.vertices[0].color = { 0.0f, 1.0f, 0.0f };
-    _triangle_mesh.vertices[1].color = { 0.0f, 1.0f, 0.0f };
-    _triangle_mesh.vertices[2].color = { 0.0f, 1.0f, 0.0f };
-
-    UploadMesh(_triangle_mesh);
+    UploadMesh(_monkey_mesh);
 }
 
 // .....oooOO0OOooo.....oooOO0OOooo.....oooOO0OOooo.....oooOO0OOooo.....oooOO0OOooo.....

@@ -27,7 +27,10 @@ struct Vertex
 struct Mesh
 {
     std::vector<Vertex> vertices;
-    AllocatedBuffer vertex_buffer;
+    AllocatedBuffer     vertex_buffer;
+
+    // Read data from obj file
+    bool LoadFromObj(const char* file_name);
 };
 
 struct MeshPushConstants

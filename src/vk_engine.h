@@ -62,7 +62,7 @@ public:
     // Grahics pipeline necessities
     VkPipelineLayout    _mesh_pipeline_layout;
     VkPipeline          _mesh_pipeline;
-    Mesh                _triangle_mesh;
+    Mesh                _monkey_mesh;
 
     // Memory allocation for vertex allocation
     VmaAllocator _allocator;
