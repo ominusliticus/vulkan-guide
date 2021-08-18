@@ -15,6 +15,8 @@ namespace vkinit
         return command_pool_info;
     }
 
+    // .....oooOO0OOooo.....oooOO0OOooo.....oooOO0OOooo.....oooOO0OOooo.....oooOO0OOooo.....
+
     VkCommandBufferAllocateInfo	CommandBufferAllocateInfo(VkCommandPool pool, uint32_t count /* = 1 */, VkCommandBufferLevel level /* = VK_COMMAND_BUFFER_LEVEL_PRIMARY*/)
     {
         // Create command buffers used for rendering
@@ -28,6 +30,8 @@ namespace vkinit
         return command_buffer_info;
     }
 
+    // .....oooOO0OOooo.....oooOO0OOooo.....oooOO0OOooo.....oooOO0OOooo.....oooOO0OOooo.....
+
     VkRenderPassCreateInfo RenderPassCreateInfo(VkAttachmentDescription* color_attachment, uint32_t attachment_count, VkSubpassDescription* subpasses, uint32_t subpass_count)
     {
         VkRenderPassCreateInfo render_pass_info{};
@@ -39,6 +43,8 @@ namespace vkinit
         return render_pass_info;
     }
 
+    // .....oooOO0OOooo.....oooOO0OOooo.....oooOO0OOooo.....oooOO0OOooo.....oooOO0OOooo.....
+
     VkPipelineShaderStageCreateInfo	PipelineShaderStageCreateInfo(VkShaderStageFlagBits stage, VkShaderModule shader_module)
     {
         VkPipelineShaderStageCreateInfo info{};
@@ -49,6 +55,8 @@ namespace vkinit
         info.pName  = "main";
         return info;
     }
+
+    // .....oooOO0OOooo.....oooOO0OOooo.....oooOO0OOooo.....oooOO0OOooo.....oooOO0OOooo.....
 
     VkPipelineVertexInputStateCreateInfo	VertexInputStateCreateInfo()
     {
@@ -62,6 +70,8 @@ namespace vkinit
         return info;
     }
 
+    // .....oooOO0OOooo.....oooOO0OOooo.....oooOO0OOooo.....oooOO0OOooo.....oooOO0OOooo.....
+
     VkPipelineInputAssemblyStateCreateInfo	InputAssemblyCreateInfo(VkPrimitiveTopology topology)
     {
         VkPipelineInputAssemblyStateCreateInfo info{};
@@ -71,6 +81,8 @@ namespace vkinit
         info.primitiveRestartEnable = VK_FALSE;
         return info;
     }
+
+    // .....oooOO0OOooo.....oooOO0OOooo.....oooOO0OOooo.....oooOO0OOooo.....oooOO0OOooo.....
 
     VkPipelineRasterizationStateCreateInfo	RasterizationStateCreateInfo(VkPolygonMode polygon_mode)
     {
@@ -90,6 +102,8 @@ namespace vkinit
         return info;
     }
 
+    // .....oooOO0OOooo.....oooOO0OOooo.....oooOO0OOooo.....oooOO0OOooo.....oooOO0OOooo.....
+
     VkPipelineColorBlendAttachmentState		ColorBlendAttachmentState()
     {
         VkPipelineColorBlendAttachmentState color_blend_attachment{};
@@ -97,6 +111,8 @@ namespace vkinit
         color_blend_attachment.blendEnable      = VK_FALSE;
         return color_blend_attachment;
     }
+
+    // .....oooOO0OOooo.....oooOO0OOooo.....oooOO0OOooo.....oooOO0OOooo.....oooOO0OOooo.....
 
     VkPipelineMultisampleStateCreateInfo	MultisamplingStateCreateInfo()
     {
@@ -111,6 +127,8 @@ namespace vkinit
         info.alphaToOneEnable       = VK_FALSE;
         return info;
     }
+
+    // .....oooOO0OOooo.....oooOO0OOooo.....oooOO0OOooo.....oooOO0OOooo.....oooOO0OOooo.....
 
     VkPipelineLayoutCreateInfo PipelineLayoutCreateInfo()
     {

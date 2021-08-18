@@ -11,6 +11,7 @@
 
 #include <vk_pipeline.h>
 #include <deletion_queue.h>
+#include <vk_mesh.h>
 
 class VulkanEngine {
 public:
@@ -33,6 +34,7 @@ public:
     // Window object
     VkExtent2D			_window_extent{ 1700 , 900 };	// Window dimensions
     struct SDL_Window*	_window{ nullptr };
+    float               _aspect_ratio = _window_extent.width / _window_extent.height;
 
     // Swapchain functionality
     VkSwapchainKHR				_swapchain;					// Swap chain variable
@@ -58,9 +60,9 @@ public:
     VkFence		_render_fence;
 
     // Grahics pipeline necessities
-    VkPipelineLayout    _triangle_pipeline_layout;
-    VkPipeline          _triangle_pipeline;
-    VkPipeline          _colored_triangle_pipeline;
+    VkPipelineLayout    _mesh_pipeline_layout;
+    VkPipeline          _mesh_pipeline;
+    Mesh                _triangle_mesh;
 
     // Memory allocation for vertex allocation
     VmaAllocator _allocator;
@@ -84,4 +86,7 @@ private:
     void InitFrameBuffers();
     void InitSyncStructure();		// Initializes semaphores and fences for GPU synchronization
     void InitPipeLines();			// Initializes pipelines for objects we want to render
+
+    void LoadMeshes();
+    void UploadMesh(Mesh& mesh);
 };
