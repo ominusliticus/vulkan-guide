@@ -42,6 +42,11 @@ public:
     std::vector<VkImage>		_swapchain_images;			// Array for images in swapchain
     std::vector<VkImageView>	_swapchain_image_views;		// Array for image views in swapchain
 
+    // Depth buffering 
+    VkImageView     _depth_image_view;
+    AllocatedImage  _depth_image;
+    VkFormat        _depth_format;
+
     // Command Pool and Buffer
     VkCommandPool	_command_pool;		
     VkCommandBuffer	_command_buffer;	// Stores functions calls passed to GPU

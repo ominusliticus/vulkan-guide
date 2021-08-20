@@ -13,4 +13,9 @@ struct AllocatedBuffer
     VmaAllocation allocation;
 };
 
-//we will add our main reusable types here
+// For depth buffering 
+struct AllocatedImage
+{
+    VkImage image;
+    VmaAllocation allocation;
+};

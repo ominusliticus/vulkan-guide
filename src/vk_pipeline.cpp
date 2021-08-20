@@ -29,20 +29,21 @@ VkPipeline PipelineBuilder::BuildPipeline(VkDevice device, VkRenderPass pass)
 
     // Build actual graphics pipeline
     VkGraphicsPipelineCreateInfo pipeline_info{};
-    pipeline_info.sType = VK_STRUCTURE_TYPE_GRAPHICS_PIPELINE_CREATE_INFO;
-    pipeline_info.pNext = nullptr;
-    pipeline_info.stageCount = _shader_stages_infos.size();
-    pipeline_info.pStages = _shader_stages_infos.data();
-    pipeline_info.pVertexInputState = &_vertex_input_info;
-    pipeline_info.pInputAssemblyState = &_input_assembly_info;
-    pipeline_info.pViewportState = &viewport_info;
-    pipeline_info.pRasterizationState = &_rasterizer_info;
-    pipeline_info.pMultisampleState = &_multisampling_info;
-    pipeline_info.pColorBlendState = &color_blend_info;
-    pipeline_info.layout = _pipeline_layout;
-    pipeline_info.renderPass = pass;
-    pipeline_info.subpass = 0;
-    pipeline_info.basePipelineHandle = VK_NULL_HANDLE;
+    pipeline_info.sType                 = VK_STRUCTURE_TYPE_GRAPHICS_PIPELINE_CREATE_INFO;
+    pipeline_info.pNext                 = nullptr;
+    pipeline_info.stageCount            = _shader_stages_infos.size();
+    pipeline_info.pStages               = _shader_stages_infos.data();
+    pipeline_info.pVertexInputState     = &_vertex_input_info;
+    pipeline_info.pInputAssemblyState   = &_input_assembly_info;
+    pipeline_info.pViewportState        = &viewport_info;
+    pipeline_info.pRasterizationState   = &_rasterizer_info;
+    pipeline_info.pMultisampleState     = &_multisampling_info;
+    pipeline_info.pColorBlendState      = &color_blend_info;
+    pipeline_info.layout                = _pipeline_layout;
+    pipeline_info.renderPass            = pass;
+    pipeline_info.subpass               = 0;
+    pipeline_info.basePipelineHandle    = VK_NULL_HANDLE;
+    pipeline_info.pDepthStencilState    = &_depth_stencil;
 
     VkPipeline new_pipeline;
     if (vkCreateGraphicsPipelines(device, VK_NULL_HANDLE, 1, &pipeline_info, nullptr, &new_pipeline) != VK_SUCCESS)
