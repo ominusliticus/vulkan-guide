@@ -9,13 +9,13 @@
 
 struct AllocatedBuffer
 {
-    VkBuffer buffer;
-    VmaAllocation allocation;
+    VkBuffer        buffer;
+    VmaAllocation   allocation;
 };
 
 // For depth buffering 
 struct AllocatedImage
 {
-    VkImage image;
-    VmaAllocation allocation;
+    VkImage         image;
+    VmaAllocation   allocation;
 };

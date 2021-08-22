@@ -8,10 +8,14 @@
 
 #include <vector>
 #include <functional>
+#include <unordered_map>
+#include <string>
 
 #include <vk_pipeline.h>
 #include <deletion_queue.h>
 #include <vk_mesh.h>
+#include <vk_material.h>
+#include <vk_renderObject.h>
 
 class VulkanEngine {
 public:
@@ -24,6 +28,15 @@ public:
     // Shader Code
     bool LoadShaderModule(const char* file_path, VkShaderModule* out_shader_module);
 
+    // Create Material and add to map
+    Material* CreateMaterial(VkPipeline pipeline, VkPipelineLayout layout, const std::string& name);
+
+    // Returns nullptr if can't be found
+    Material*   GetMaterial(const std::string& name);
+    Mesh*       GetMesh(const std::string& name);
+
+    void DrawObjects(VkCommandBuffer command_buffer, RenderObject* first, int count);
+
     // Vulkan API main interface
     VkInstance					_instance;			// Vulkan library Handle
     VkDebugUtilsMessengerEXT	_debug_messenger;	// Vulkan debug output
@@ -34,7 +47,7 @@ public:
     // Window object
     VkExtent2D			_window_extent{ 1700 , 900 };	// Window dimensions
     struct SDL_Window*	_window{ nullptr };
-    float               _aspect_ratio = _window_extent.width / _window_extent.height;
+    float               _aspect_ratio = (float)_window_extent.width / (float)_window_extent.height;
 
     // Swapchain functionality
     VkSwapchainKHR				_swapchain;					// Swap chain variable
@@ -64,16 +77,16 @@ public:
     VkSemaphore _render_semaphore;
     VkFence		_render_fence;
 
-    // Grahics pipeline necessities
-    VkPipelineLayout    _mesh_pipeline_layout;
-    VkPipeline          _mesh_pipeline;
-    Mesh                _monkey_mesh;
-
     // Memory allocation for vertex allocation
     VmaAllocator _allocator;
 
     // Queue for destruction calls
     DeletionQueue _main_deletion_queue;
+
+    // Refactor to allow for rendering of arbitrary meshes
+    std::vector<RenderObject>                   _renderables;
+    std::unordered_map<std::string, Material>   _materials;
+    std::unordered_map<std::string, Mesh>       _meshes;
 
     // Bool for successful initialization
     bool _isInitialized{ false };
@@ -91,6 +104,7 @@ private:
     void InitFrameBuffers();
     void InitSyncStructure();		// Initializes semaphores and fences for GPU synchronization
     void InitPipeLines();			// Initializes pipelines for objects we want to render
+    void InitScene();
 
     void LoadMeshes();
     void UploadMesh(Mesh& mesh);
