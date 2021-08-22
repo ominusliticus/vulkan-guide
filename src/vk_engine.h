@@ -17,6 +17,8 @@
 #include <vk_material.h>
 #include <vk_renderObject.h>
 
+#include <Camera.h>
+
 class VulkanEngine {
 public:
     // Core functionality
@@ -48,6 +50,9 @@ public:
     VkExtent2D			_window_extent{ 1700 , 900 };	// Window dimensions
     struct SDL_Window*	_window{ nullptr };
     float               _aspect_ratio = (float)_window_extent.width / (float)_window_extent.height;
+
+    // Default camera
+    Camera _camera;
 
     // Swapchain functionality
     VkSwapchainKHR				_swapchain;					// Swap chain variable
@@ -105,6 +110,7 @@ private:
     void InitSyncStructure();		// Initializes semaphores and fences for GPU synchronization
     void InitPipeLines();			// Initializes pipelines for objects we want to render
     void InitScene();
+    void InitCamera();
 
     void LoadMeshes();
     void UploadMesh(Mesh& mesh);

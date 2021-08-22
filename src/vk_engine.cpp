@@ -60,6 +60,7 @@ void VulkanEngine::Init()
     InitPipeLines();
     LoadMeshes();
     InitScene();
+    InitCamera();
 
     // Assuming everything initialized error free 
     _isInitialized = true;
@@ -193,6 +194,53 @@ void VulkanEngine::Run()
                 if (e.key.keysym.sym == SDLK_SPACE)
                 {
                     _selected_shader = (_selected_shader + 1) % 2;
+                }
+
+
+                int x, y;
+                uint32_t button = SDL_GetMouseState(&x, &y);
+                std::cout << "Mouse is at: ( " << x << " , " << y << " )\n";
+                // WASD implementation
+                float speed = 0.1f;
+                if (e.key.keysym.sym == SDLK_LSHIFT || e.key.keysym.sym == SDLK_RSHIFT)
+                {
+                    SDL_PumpEvents();
+                    if (e.key.keysym.sym == SDLK_a)
+                    {
+                        _camera.position.x += speed;
+                    }
+                    if (e.key.keysym.sym == SDLK_s)
+                    {
+                        _camera.position.z += -speed;
+                    }
+                    if (e.key.keysym.sym == SDLK_d)
+                    {
+                        _camera.position.x += -speed;
+                    }
+                    if (e.key.keysym.sym == SDLK_w)
+                    {
+                        _camera.position.z += speed;
+                    }
+                }
+                else
+                {
+                    speed *= 0.5;
+                    if (e.key.keysym.sym == SDLK_a)
+                    {
+                        _camera.position.x += speed;
+                    }
+                    if (e.key.keysym.sym == SDLK_s)
+                    {
+                        _camera.position.z += -speed;
+                    }
+                    if (e.key.keysym.sym == SDLK_d)
+                    {
+                        _camera.position.x += -speed;
+                    }
+                    if (e.key.keysym.sym == SDLK_w)
+                    {
+                        _camera.position.z += speed;
+                    }
                 }
             }
         }
@@ -652,10 +700,6 @@ void VulkanEngine::InitScene()
 void VulkanEngine::DrawObjects(VkCommandBuffer command_buffer, RenderObject* first, int count)
 {
     // make model view matrix for renderable
-    glm::vec3 camera_position{ 0.0f, -6.0f, -10.0f };
-    glm::mat4 view_matrix       = glm::translate(glm::mat4{ 1.0f }, camera_position);
-    glm::mat4 projection_matrix = glm::perspective(glm::radians(70.0f), _aspect_ratio, 0.1f, 200.0f);
-    projection_matrix[1][1] *= -1.0;
 
     Mesh*       last_mesh     = nullptr; // first[0].mesh;
     Material*   last_material = nullptr; // first[0].material;
@@ -671,7 +715,7 @@ void VulkanEngine::DrawObjects(VkCommandBuffer command_buffer, RenderObject* fir
         }
 
         glm::mat4 model_matrix  = object.transform_matrix;
-        glm::mat4 mesh_matrix   = projection_matrix * view_matrix * model_matrix;
+        glm::mat4 mesh_matrix   = _camera.GetCamera(model_matrix);
 
         MeshPushConstants constants{};
         constants.render_matrix = mesh_matrix;
@@ -690,4 +734,12 @@ void VulkanEngine::DrawObjects(VkCommandBuffer command_buffer, RenderObject* fir
         // Draw!
         vkCmdDraw(command_buffer, object.mesh->vertices.size(), 1, 0, 0);
     }
+}
+
+void VulkanEngine::InitCamera()
+{
+    _camera.position            = glm::vec3{ 0.0, -1.0, 0.0 };
+    _camera.field_of_view       = 70.0f;
+    _camera.projection_matrix   = glm::perspective(glm::radians(_camera.field_of_view), _aspect_ratio, 0.1f, 200.f);
+    _camera.projection_matrix[1][1] *= -1.0;
 }
