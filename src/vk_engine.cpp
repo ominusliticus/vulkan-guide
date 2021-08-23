@@ -196,54 +196,50 @@ void VulkanEngine::Run()
                     _selected_shader = (_selected_shader + 1) % 2;
                 }
 
-
-                int x, y;
-                uint32_t button = SDL_GetMouseState(&x, &y);
-                std::cout << "Mouse is at: ( " << x << " , " << y << " )\n";
+                // TODO: add 3D camera support
                 // WASD implementation
-                float speed = 0.1f;
-                if (e.key.keysym.sym == SDLK_LSHIFT || e.key.keysym.sym == SDLK_RSHIFT)
+                float speed = 0.05f;
+                if (e.key.keysym.sym == SDLK_a)
                 {
-                    SDL_PumpEvents();
-                    if (e.key.keysym.sym == SDLK_a)
-                    {
-                        _camera.position.x += speed;
-                    }
-                    if (e.key.keysym.sym == SDLK_s)
-                    {
-                        _camera.position.z += -speed;
-                    }
-                    if (e.key.keysym.sym == SDLK_d)
-                    {
-                        _camera.position.x += -speed;
-                    }
-                    if (e.key.keysym.sym == SDLK_w)
-                    {
-                        _camera.position.z += speed;
-                    }
+                    _camera.ProcessInput(CameraDirection::LEFT, speed);
                 }
-                else
+                if (e.key.keysym.sym == SDLK_d)
                 {
-                    speed *= 0.5;
-                    if (e.key.keysym.sym == SDLK_a)
-                    {
-                        _camera.position.x += speed;
-                    }
-                    if (e.key.keysym.sym == SDLK_s)
-                    {
-                        _camera.position.z += -speed;
-                    }
-                    if (e.key.keysym.sym == SDLK_d)
-                    {
-                        _camera.position.x += -speed;
-                    }
-                    if (e.key.keysym.sym == SDLK_w)
-                    {
-                        _camera.position.z += speed;
-                    }
+                    _camera.ProcessInput(CameraDirection::RIGHT, speed);
+                }
+                if (e.key.keysym.sym == SDLK_s)
+                {
+                    _camera.ProcessInput(CameraDirection::BACKWARD, speed);
+                }
+                if (e.key.keysym.sym == SDLK_w)
+                {
+                    _camera.ProcessInput(CameraDirection::FORWARD, speed);
+                }
+
+                if (e.key.keysym.sym == SDLK_a)
+                {
+                    _camera.ProcessInput(CameraDirection::LEFT, speed);
+                }
+                if (e.key.keysym.sym == SDLK_d)
+                {
+                    _camera.ProcessInput(CameraDirection::RIGHT, speed);
+                }
+                if (e.key.keysym.sym == SDLK_s)
+                {
+                    _camera.ProcessInput(CameraDirection::BACKWARD, speed);
+                }
+                if (e.key.keysym.sym == SDLK_w)
+                {
+                    _camera.ProcessInput(CameraDirection::FORWARD, speed);
                 }
             }
         }
+
+        int x, y;
+        SDL_PumpEvents();
+        uint32_t button = SDL_GetMouseState(&x, &y);
+        std::cout << "Mouse is at: ( " << x << " , " << y << " )\n";
+        _camera.UpdateRotation(x, y, _window_extent);
 
         Draw();
     }
@@ -708,6 +704,7 @@ void VulkanEngine::DrawObjects(VkCommandBuffer command_buffer, RenderObject* fir
         RenderObject& object = first[i];
 
         // only bind mesh if it doesn't match with the last one
+        // TODO: sort render objects by pipeline and mesh to reduce the number of bind calls
         if (object.material != last_material)
         {
             vkCmdBindPipeline(command_buffer, VK_PIPELINE_BIND_POINT_GRAPHICS, object.material->pipeline);
@@ -738,7 +735,12 @@ void VulkanEngine::DrawObjects(VkCommandBuffer command_buffer, RenderObject* fir
 
 void VulkanEngine::InitCamera()
 {
+    _camera.yaw                 = 0.0;
+    _camera.pitch               = 0.0;
     _camera.position            = glm::vec3{ 0.0, -1.0, 0.0 };
+    _camera.front               = glm::vec3{ 0.0, 0.0, 1.0 };
+    _camera.right               = glm::vec3{ 1.0, 0.0, 0.0 };
+    _camera.up                  = glm::vec3{ 0.0, 1.0, 0.0 };
     _camera.field_of_view       = 70.0f;
     _camera.projection_matrix   = glm::perspective(glm::radians(_camera.field_of_view), _aspect_ratio, 0.1f, 200.f);
     _camera.projection_matrix[1][1] *= -1.0;
