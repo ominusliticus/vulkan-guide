@@ -16,8 +16,11 @@
 #include <vk_mesh.h>
 #include <vk_material.h>
 #include <vk_renderObject.h>
+#include <vk_frameData.h>
 
-#include <Camera.h>
+#include <vk_camera.h>
+
+constexpr unsigned int FRAME_OVERLAP = 2;  
 
 class VulkanEngine {
 public:
@@ -37,6 +40,12 @@ public:
     Material*   GetMaterial(const std::string& name);
     Mesh*       GetMesh(const std::string& name);
 
+    // Returns FrameData struct
+    FrameData& GetCurrentFrame();
+
+    // Allocate buffer for each render frame
+    AllocatedBuffer CreateBuffer(size_t allocation_size, VkBufferUsageFlags usage, VmaMemoryUsage memory_usage);
+
     void DrawObjects(VkCommandBuffer command_buffer, RenderObject* first, int count);
 
     // Vulkan API main interface
@@ -51,8 +60,11 @@ public:
     struct SDL_Window*	_window{ nullptr };
     float               _aspect_ratio = (float)_window_extent.width / (float)_window_extent.height;
 
+    // Contains synchronization and command buffer
+    FrameData _frame_data[FRAME_OVERLAP];
+
     // Default camera
-    Camera _camera;
+    Camera          _camera;
 
     // Swapchain functionality
     VkSwapchainKHR				_swapchain;					// Swap chain variable
@@ -65,10 +77,6 @@ public:
     AllocatedImage  _depth_image;
     VkFormat        _depth_format;
 
-    // Command Pool and Buffer
-    VkCommandPool	_command_pool;		
-    VkCommandBuffer	_command_buffer;	// Stores functions calls passed to GPU
-
     // GPU Queues
     VkQueue		_graphics_queue;		// Queue to submit rendering calls to
     uint32_t	_graphics_queue_family;	// Keeps track which family of queues we are submitting to
@@ -77,10 +85,9 @@ public:
     VkRenderPass				_render_pass;	// For organizing function calls and image data passed to graphics queue
     std::vector<VkFramebuffer>	_frame_buffers;	// Contains organized images
 
-    // GPU Synchronoization 
-    VkSemaphore _present_semaphore;
-    VkSemaphore _render_semaphore;
-    VkFence		_render_fence;
+    // Setup Descriptor sets stuff
+    VkDescriptorSetLayout   _global_descriptor_set_layout;
+    VkDescriptorPool        _descriptor_pool;
 
     // Memory allocation for vertex allocation
     VmaAllocator _allocator;
@@ -108,9 +115,10 @@ private:
     void InitDefaultRenderPass();
     void InitFrameBuffers();
     void InitSyncStructure();		// Initializes semaphores and fences for GPU synchronization
+    void InitCamera();
+    void InitDescriptors();
     void InitPipeLines();			// Initializes pipelines for objects we want to render
     void InitScene();
-    void InitCamera();
 
     void LoadMeshes();
     void UploadMesh(Mesh& mesh);

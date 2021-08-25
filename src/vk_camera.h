@@ -35,3 +35,11 @@ public:
 private:
     void UpdateVectors();
 };
+
+// will hold the descriptor set for Camera class
+struct GPUCameraData
+{
+    glm::mat4 view_matrix;
+    glm::mat4 projection_matrix;
+    glm::mat4 view_projection;      // Product of view and projection matrix
+};

@@ -1,6 +1,6 @@
 
 
-#include <Camera.h>
+#include <vk_camera.h>
 
 void Camera::ProcessInput(CameraDirection dir, float speed)
 {
@@ -34,16 +34,16 @@ void Camera::UpdateRotation(float x, float y, VkExtent2D extent)
         last_x = x;
         last_y = y;
     }
-    if (x <= 0) yaw += -0.5;
-    if (x >= extent.width-1) yaw += 0.5;
+    if (x <= 0) yaw += -sensitivity * origin.x;
+    if (x >= extent.width-1) yaw += sensitivity * origin.x;
     if (y <= 0)
     {
-        pitch += -0.5;
+        pitch += -sensitivity * origin.y;
         if (pitch < -90) pitch = -90;
     }
     if (y >= extent.height-1)
     {
-        pitch += 0.5;
+        pitch += sensitivity * origin.y;
         if (pitch > 90) pitch = 90;
     }
     UpdateVectors();
@@ -59,11 +59,12 @@ void Camera::UpdateVectors()
 
     right   = glm::normalize(glm::cross(front, world_up));
     up      = glm::normalize(glm::cross(right, front));
+
+    view_matrix = glm::lookAt(position, position + front, up);
 }
 
 
 glm::mat4 Camera::GetCamera(glm::mat4& model)
 {
-    view_matrix = glm::lookAt(position, position + front, up);
     return projection_matrix * view_matrix * model;
 }

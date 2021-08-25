@@ -27,5 +27,9 @@ namespace vkinit
     VkImageCreateInfo                       ImageCreatInfo(VkFormat format, VkImageUsageFlags usage_flags, VkExtent3D extent);
     VkImageViewCreateInfo                   ImageViewCreateInfo(VkFormat format, VkImage image, VkImageAspectFlags aspect_flags);
     VkPipelineDepthStencilStateCreateInfo   DepthStencilCreateInfo(bool b_depth_test, bool b_depth_write, VkCompareOp compare_op);
+
+    // Initialize synchronoization structures
+    VkSemaphoreCreateInfo   SemaphoreCreateInfo(VkSemaphoreCreateFlags flags=0);
+    VkFenceCreateInfo       FenceCreateInfo(VkFenceCreateFlags flags);
 }
 
