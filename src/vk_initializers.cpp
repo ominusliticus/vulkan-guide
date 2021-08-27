@@ -233,6 +233,45 @@ namespace vkinit
         info.flags = flags;
         return info;
     }
+
+    // .....oooOO0OOooo.....oooOO0OOooo.....oooOO0OOooo.....oooOO0OOooo.....oooOO0OOooo.....
+
+    VkDescriptorSetLayoutBinding DescriptorSetLayoutBinding(VkDescriptorType type, VkShaderStageFlags stage_flags, uint32_t binding)
+    {
+        VkDescriptorSetLayoutBinding set_binding{};
+        set_binding.binding             = binding;
+        set_binding.descriptorCount     = 1;
+        set_binding.descriptorType      = type;
+        set_binding.pImmutableSamplers  = nullptr;
+        set_binding.stageFlags          = stage_flags;
+        return set_binding;
+    }
+
+    // .....oooOO0OOooo.....oooOO0OOooo.....oooOO0OOooo.....oooOO0OOooo.....oooOO0OOooo.....
+
+    VkWriteDescriptorSet WriteDescriptorSet(VkDescriptorType type, VkDescriptorSet descriptor_set, VkDescriptorBufferInfo* buffer_info, uint32_t binding)
+    {
+        VkWriteDescriptorSet set{};
+        set.sType           = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
+        set.pNext           = nullptr;
+        set.dstBinding      = binding;
+        set.dstSet          = descriptor_set;
+        set.descriptorCount = 1;
+        set.descriptorType  = type;
+        set.pBufferInfo     = buffer_info;
+        return set;
+    }
+
+    // .....oooOO0OOooo.....oooOO0OOooo.....oooOO0OOooo.....oooOO0OOooo.....oooOO0OOooo.....
+
+    VkDescriptorBufferInfo DescriptorBufferInfo(VkBuffer buffer, VkDeviceSize offset, VkDeviceSize range)
+    {
+        VkDescriptorBufferInfo info{};
+        info.buffer = buffer;
+        info.offset = offset;
+        info.range  = range;
+        return info;
+    }
 }
 
 

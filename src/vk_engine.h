@@ -19,6 +19,7 @@
 #include <vk_frameData.h>
 
 #include <vk_camera.h>
+#include <vk_gpuSceneData.h>
 
 constexpr unsigned int FRAME_OVERLAP = 2;  
 
@@ -46,12 +47,16 @@ public:
     // Allocate buffer for each render frame
     AllocatedBuffer CreateBuffer(size_t allocation_size, VkBufferUsageFlags usage, VmaMemoryUsage memory_usage);
 
+    // Pads scene data to fill alignment buffer requirement of GPU
+    size_t PadUniformBufferSize(size_t original_size);
+
     void DrawObjects(VkCommandBuffer command_buffer, RenderObject* first, int count);
 
     // Vulkan API main interface
     VkInstance					_instance;			// Vulkan library Handle
     VkDebugUtilsMessengerEXT	_debug_messenger;	// Vulkan debug output
-    VkPhysicalDevice			_chosenGPU;			// GPU chosen as the default device <--- edit
+    VkPhysicalDevice			_chosen_gpu;		// GPU chosen as the default device <--- edit
+    VkPhysicalDeviceProperties  _gpu_properties;
     VkDevice					_device;			// Vulkan device for commands
     VkSurfaceKHR				_surface;			// Vulkan window surface
     
@@ -65,6 +70,10 @@ public:
 
     // Default camera
     Camera          _camera;
+
+    // Scene data 
+    GPUSceneData    _scene_parameters;
+    AllocatedBuffer _scene_parameters_buffer;
 
     // Swapchain functionality
     VkSwapchainKHR				_swapchain;					// Swap chain variable
@@ -87,6 +96,7 @@ public:
 
     // Setup Descriptor sets stuff
     VkDescriptorSetLayout   _global_descriptor_set_layout;
+    VkDescriptorSetLayout   _object_descriptor_set_layout;
     VkDescriptorPool        _descriptor_pool;
 
     // Memory allocation for vertex allocation

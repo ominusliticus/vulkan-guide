@@ -12,20 +12,20 @@
 VkPipeline PipelineBuilder::BuildPipeline(VkDevice device, VkRenderPass pass)
 {
     VkPipelineViewportStateCreateInfo viewport_info{};
-    viewport_info.sType = VK_STRUCTURE_TYPE_PIPELINE_VIEWPORT_STATE_CREATE_INFO;
-    viewport_info.pNext = nullptr;
+    viewport_info.sType         = VK_STRUCTURE_TYPE_PIPELINE_VIEWPORT_STATE_CREATE_INFO;
+    viewport_info.pNext         = nullptr;
     viewport_info.viewportCount = 1;
-    viewport_info.pViewports = &_viewport;
-    viewport_info.scissorCount = 1;
-    viewport_info.pScissors = &_scissor;
+    viewport_info.pViewports    = &_viewport;
+    viewport_info.scissorCount  = 1;
+    viewport_info.pScissors     = &_scissor;
 
     VkPipelineColorBlendStateCreateInfo color_blend_info{};
-    color_blend_info.sType = VK_STRUCTURE_TYPE_PIPELINE_COLOR_BLEND_STATE_CREATE_INFO;
-    color_blend_info.pNext = nullptr;
-    color_blend_info.logicOpEnable = VK_FALSE;
-    color_blend_info.logicOp = VK_LOGIC_OP_COPY;
-    color_blend_info.attachmentCount = 1;
-    color_blend_info.pAttachments = &_color_blend_attachement;
+    color_blend_info.sType              = VK_STRUCTURE_TYPE_PIPELINE_COLOR_BLEND_STATE_CREATE_INFO;
+    color_blend_info.pNext              = nullptr;
+    color_blend_info.logicOpEnable      = VK_FALSE;
+    color_blend_info.logicOp            = VK_LOGIC_OP_COPY;
+    color_blend_info.attachmentCount    = 1;
+    color_blend_info.pAttachments       = &_color_blend_attachement;
 
     // Build actual graphics pipeline
     VkGraphicsPipelineCreateInfo pipeline_info{};

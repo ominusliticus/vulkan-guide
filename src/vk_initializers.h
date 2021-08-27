@@ -5,7 +5,7 @@
 
 #include <vk_types.h>
 
-namespace vkinit 
+namespace vkinit
 {
     VkCommandPoolCreateInfo		CommandPoolCreateInfo(uint32_t queue_family_index, VkCommandPoolCreateFlags flags = 0);
     VkCommandBufferAllocateInfo	CommandBufferAllocateInfo(VkCommandPool pool, uint32_t count = 1, VkCommandBufferLevel level = VK_COMMAND_BUFFER_LEVEL_PRIMARY);
@@ -29,7 +29,12 @@ namespace vkinit
     VkPipelineDepthStencilStateCreateInfo   DepthStencilCreateInfo(bool b_depth_test, bool b_depth_write, VkCompareOp compare_op);
 
     // Initialize synchronoization structures
-    VkSemaphoreCreateInfo   SemaphoreCreateInfo(VkSemaphoreCreateFlags flags=0);
+    VkSemaphoreCreateInfo   SemaphoreCreateInfo(VkSemaphoreCreateFlags flags = 0);
     VkFenceCreateInfo       FenceCreateInfo(VkFenceCreateFlags flags);
+
+    // Descriptor set initializations
+    VkDescriptorSetLayoutBinding    DescriptorSetLayoutBinding(VkDescriptorType type, VkShaderStageFlags stage_flags, uint32_t binding);
+    VkWriteDescriptorSet            WriteDescriptorSet(VkDescriptorType type, VkDescriptorSet descriptor_set, VkDescriptorBufferInfo* buffer_info, uint32_t binding);
+    VkDescriptorBufferInfo          DescriptorBufferInfo(VkBuffer buffer, VkDeviceSize offset, VkDeviceSize range);
 }
 

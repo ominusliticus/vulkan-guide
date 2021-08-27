@@ -13,6 +13,8 @@ struct FrameData
     VkCommandBuffer command_buffer;
 
     AllocatedBuffer camera_buffer;
+    AllocatedBuffer object_buffer;
 
     VkDescriptorSet global_descriptor_set;
+    VkDescriptorSet object_descriptor_set;
 };
