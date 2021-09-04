@@ -3,8 +3,10 @@
 layout (location = 0) in vec3 vertex_position;
 layout (location = 1) in vec3 vertex_normal;
 layout (location = 2) in vec3 vertex_color;
+layout (location = 3) in vec2 vertex_texture_coordinate;
 
 layout (location = 0) out vec3 out_color;
+layout (location = 1) out vec2 out_texture_coodinate;
 
 struct ObjectData
 {
@@ -36,4 +38,5 @@ void main()
 	mat4 transform_matrix	= (CameraData.view_projection * model_matrix);
 	gl_Position				= transform_matrix * vec4(vertex_position, 1.0f);
 	out_color				= vertex_color;
+	out_texture_coodinate	= vertex_texture_coordinate;
 }

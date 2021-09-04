@@ -32,6 +32,18 @@ namespace vkinit
 
     // .....oooOO0OOooo.....oooOO0OOooo.....oooOO0OOooo.....oooOO0OOooo.....oooOO0OOooo.....
 
+    VkCommandBufferBeginInfo CommandBufferBeginInfo(VkCommandBufferResetFlags flags, VkCommandBufferInheritanceInfo* inheritance_info /* = nullptr */)
+    {
+        VkCommandBufferBeginInfo info{};
+        info.sType              = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
+        info.pNext              = nullptr;
+        info.flags              = VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT;
+        info.pInheritanceInfo   = nullptr;
+        return info;
+    }
+
+    // .....oooOO0OOooo.....oooOO0OOooo.....oooOO0OOooo.....oooOO0OOooo.....oooOO0OOooo.....
+
     VkRenderPassCreateInfo RenderPassCreateInfo(VkAttachmentDescription* color_attachment, uint32_t attachment_count, VkSubpassDescription* subpasses, uint32_t subpass_count)
     {
         VkRenderPassCreateInfo render_pass_info{};
@@ -56,6 +68,24 @@ namespace vkinit
         info.renderArea.extent	    = extent;
         info.framebuffer			= framebuffer;
         info.clearValueCount		= 1;
+        return info;
+    }
+
+    // .....oooOO0OOooo.....oooOO0OOooo.....oooOO0OOooo.....oooOO0OOooo.....oooOO0OOooo.....
+
+    VkSubmitInfo SubmitInfo(VkCommandBuffer* command_buffer)
+    {
+        VkPipelineStageFlags wait_stage = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT;
+        VkSubmitInfo info{};
+        info.sType                  = VK_STRUCTURE_TYPE_SUBMIT_INFO;
+        info.pNext                  = nullptr;
+        info.pWaitDstStageMask      = 0;
+        info.waitSemaphoreCount     = 0;
+        info.pWaitSemaphores        = nullptr;
+        info.signalSemaphoreCount   = 0;
+        info.pSignalSemaphores      = nullptr;
+        info.commandBufferCount     = 1;
+        info.pCommandBuffers        = command_buffer;
         return info;
     }
 
@@ -225,7 +255,7 @@ namespace vkinit
 
     // .....oooOO0OOooo.....oooOO0OOooo.....oooOO0OOooo.....oooOO0OOooo.....oooOO0OOooo.....
 
-    VkFenceCreateInfo FenceCreateInfo(VkFenceCreateFlags flags)
+    VkFenceCreateInfo FenceCreateInfo(VkFenceCreateFlags flags /* = 0 */)
     {
         VkFenceCreateInfo info{};
         info.sType = VK_STRUCTURE_TYPE_FENCE_CREATE_INFO;
@@ -264,12 +294,42 @@ namespace vkinit
 
     // .....oooOO0OOooo.....oooOO0OOooo.....oooOO0OOooo.....oooOO0OOooo.....oooOO0OOooo.....
 
+    VkWriteDescriptorSet WriteDescriptorSet(VkDescriptorType type, VkDescriptorSet descriptor_set, VkDescriptorImageInfo* image_info, uint32_t binding)
+    {
+        VkWriteDescriptorSet set{};
+        set.sType           = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
+        set.pNext           = nullptr;
+        set.dstBinding      = binding;
+        set.dstSet          = descriptor_set;
+        set.descriptorCount = 1;
+        set.descriptorType  = type;
+        set.pImageInfo      = image_info;
+        return set;
+    }
+
+    // .....oooOO0OOooo.....oooOO0OOooo.....oooOO0OOooo.....oooOO0OOooo.....oooOO0OOooo.....
+
     VkDescriptorBufferInfo DescriptorBufferInfo(VkBuffer buffer, VkDeviceSize offset, VkDeviceSize range)
     {
         VkDescriptorBufferInfo info{};
         info.buffer = buffer;
         info.offset = offset;
         info.range  = range;
+        return info;
+    }
+
+    // .....oooOO0OOooo.....oooOO0OOooo.....oooOO0OOooo.....oooOO0OOooo.....oooOO0OOooo.....
+
+    VkSamplerCreateInfo SamplerCreateInfo(VkFilter filters, VkSamplerAddressMode sampler_address_mode /* = VK_SAMPLER_ADDRESS_MODE_REPEAT */)
+    {
+        VkSamplerCreateInfo info{};
+        info.sType          = VK_STRUCTURE_TYPE_SAMPLER_CREATE_INFO;
+        info.pNext          = nullptr;
+        info.magFilter      = filters;
+        info.minFilter      = filters;
+        info.addressModeU   = sampler_address_mode;
+        info.addressModeV   = sampler_address_mode;
+        info.addressModeW   = sampler_address_mode;
         return info;
     }
 }

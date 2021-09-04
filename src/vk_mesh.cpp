@@ -28,23 +28,31 @@ VertexInputDescription Vertex::GetVertexDescription()
     position_attribute.format   = VK_FORMAT_R32G32B32_SFLOAT;
     position_attribute.offset   = offsetof(Vertex, position);
 
-    // positions will be stored at location 1
+    // normal will be stored at location 1
     VkVertexInputAttributeDescription normal_attribute{};
     normal_attribute.binding = 0;
     normal_attribute.location = 1;
     normal_attribute.format = VK_FORMAT_R32G32B32_SFLOAT;
     normal_attribute.offset = offsetof(Vertex, normal);
 
-    // positions will be stored at location 1
+    // color will be stored at location 2
     VkVertexInputAttributeDescription color_attribute{};
     color_attribute.binding = 0;
     color_attribute.location = 2;
     color_attribute.format = VK_FORMAT_R32G32B32_SFLOAT;
     color_attribute.offset = offsetof(Vertex, color);
 
+    // texture coordinate will be stored at location 3
+    VkVertexInputAttributeDescription texture_coordinate_attribute{};
+    texture_coordinate_attribute.binding = 0;
+    texture_coordinate_attribute.location = 3;
+    texture_coordinate_attribute.format = VK_FORMAT_R32G32B32_SFLOAT;
+    texture_coordinate_attribute.offset = offsetof(Vertex, uv);
+
     description.attributes.push_back(position_attribute);
     description.attributes.push_back(normal_attribute);
     description.attributes.push_back(color_attribute);
+    description.attributes.push_back(texture_coordinate_attribute);
     return description;
 }
 
@@ -89,15 +97,22 @@ bool Mesh::LoadFromObj(const char* file_name)
                 tinyobj::real_t vz = attribute.vertices[3 * idx.vertex_index + 2];
 
                 // vertex normal
-                tinyobj::real_t nx = attribute.normals[3 * idx.normal_index+ 0];
-                tinyobj::real_t ny = attribute.normals[3 * idx.normal_index+ 1];
-                tinyobj::real_t nz = attribute.normals[3 * idx.normal_index+ 2];
+                tinyobj::real_t nx = attribute.normals[3 * idx.normal_index + 0];
+                tinyobj::real_t ny = attribute.normals[3 * idx.normal_index + 1];
+                tinyobj::real_t nz = attribute.normals[3 * idx.normal_index + 2];
+
+                tinyobj::real_t ux = attribute.texcoords[2 * idx.texcoord_index + 0];
+                tinyobj::real_t uy = attribute.texcoords[2 * idx.texcoord_index + 1];
+
 
                 // Create vertex with above information
                 Vertex new_vertex;
                 new_vertex.position.x = vx;     new_vertex.normal.x = nx;
                 new_vertex.position.y = vy;     new_vertex.normal.y = ny;
                 new_vertex.position.z = vz;     new_vertex.normal.z = nz;
+
+                new_vertex.uv.x = ux;
+                new_vertex.uv.y = 1 - uy; // nuance of vulkan coordinates
 
                 new_vertex.color = new_vertex.normal;
                 vertices.push_back(new_vertex);

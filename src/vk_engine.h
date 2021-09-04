@@ -23,6 +23,19 @@
 
 constexpr unsigned int FRAME_OVERLAP = 2;  
 
+struct UploadContext
+{
+    VkFence         upload_fence;
+    VkCommandPool   command_pool;
+};
+
+
+struct Texture
+{
+    AllocatedImage  image;
+    VkImageView     image_view;
+};
+
 class VulkanEngine {
 public:
     // Core functionality
@@ -41,6 +54,8 @@ public:
     Material*   GetMaterial(const std::string& name);
     Mesh*       GetMesh(const std::string& name);
 
+    void LoadImages();
+
     // Returns FrameData struct
     FrameData& GetCurrentFrame();
 
@@ -51,6 +66,8 @@ public:
     size_t PadUniformBufferSize(size_t original_size);
 
     void DrawObjects(VkCommandBuffer command_buffer, RenderObject* first, int count);
+
+    void ImmediateSubmit(std::function<void(VkCommandBuffer)>&& func);
 
     // Vulkan API main interface
     VkInstance					_instance;			// Vulkan library Handle
@@ -97,7 +114,10 @@ public:
     // Setup Descriptor sets stuff
     VkDescriptorSetLayout   _global_descriptor_set_layout;
     VkDescriptorSetLayout   _object_descriptor_set_layout;
+    VkDescriptorSetLayout   _single_texture_set_layout;
     VkDescriptorPool        _descriptor_pool;
+
+    UploadContext _upload_context;
 
     // Memory allocation for vertex allocation
     VmaAllocator _allocator;
@@ -109,6 +129,7 @@ public:
     std::vector<RenderObject>                   _renderables;
     std::unordered_map<std::string, Material>   _materials;
     std::unordered_map<std::string, Mesh>       _meshes;
+    std::unordered_map<std::string, Texture>    _loaded_textures;
 
     // Bool for successful initialization
     bool _isInitialized{ false };
