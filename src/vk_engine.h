@@ -150,6 +150,7 @@ private:
     void InitDescriptors();
     void InitPipeLines();			// Initializes pipelines for objects we want to render
     void InitScene();
+    void InitIMGUI();
 
     void LoadMeshes();
     void UploadMesh(Mesh& mesh);

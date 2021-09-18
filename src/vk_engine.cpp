@@ -36,6 +36,12 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
 
+// IMGUI libraries
+#include <imgui.h>
+#include <imgui_impl_sdl.h>
+#include <imgui_impl_vulkan.h>
+
+
 void VulkanEngine::Init()
 {
     // Initialize SDL and create a window with it
@@ -58,6 +64,7 @@ void VulkanEngine::Init()
     LoadMeshes();
     LoadImages();
     InitScene();
+    InitIMGUI();
 
     // Assuming everything initialized error free 
     _isInitialized = true;
@@ -86,6 +93,8 @@ void VulkanEngine::Cleanup()
 
 void VulkanEngine::Draw()
 {
+    ImGui::Render();
+    
     // 1 second in nano-seconds to avoid typing it out over and over again
     constexpr uint64_t one_second = 100000000;
 
@@ -124,6 +133,7 @@ void VulkanEngine::Draw()
     vkCmdBeginRenderPass(GetCurrentFrame().command_buffer, &render_pass_begin_info, VK_SUBPASS_CONTENTS_INLINE);
 
     DrawObjects(GetCurrentFrame().command_buffer, _renderables.data(), _renderables.size());
+    ImGui_ImplVulkan_RenderDrawData(ImGui::GetDrawData(), GetCurrentFrame().command_buffer);
 
     // End rendering pass
     vkCmdEndRenderPass(GetCurrentFrame().command_buffer);
@@ -237,6 +247,12 @@ void VulkanEngine::Run()
         uint32_t button = SDL_GetMouseState(&x, &y);
         //std::cout << "Mouse is at: ( " << x << " , " << y << " )\n";
         _camera.UpdateRotation(x, y, _window_extent);
+
+        // IMGUI frame
+        ImGui_ImplVulkan_NewFrame();
+        ImGui_ImplSDL2_NewFrame(_window);
+        ImGui::NewFrame();
+        ImGui::ShowDemoWindow();
 
         Draw();
     }
@@ -1134,4 +1150,64 @@ void VulkanEngine::LoadImages()
         });
 
     _loaded_textures["empire_diffuse"] = lost_empire_texture;
+}
+
+// .....oooOO0OOooo.....oooOO0OOooo.....oooOO0OOooo.....oooOO0OOooo.....oooOO0OOooo.....
+
+void VulkanEngine::InitIMGUI()
+{
+    // 1. Create discriptor pool for IMGUI
+    VkDescriptorPoolSize pool_sizes[] =
+    {
+        { VK_DESCRIPTOR_TYPE_SAMPLER, 1000 },
+        { VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, 1000 },
+        { VK_DESCRIPTOR_TYPE_SAMPLED_IMAGE, 1000 },
+        { VK_DESCRIPTOR_TYPE_STORAGE_IMAGE, 1000 },
+        { VK_DESCRIPTOR_TYPE_UNIFORM_TEXEL_BUFFER, 1000 },
+        { VK_DESCRIPTOR_TYPE_STORAGE_TEXEL_BUFFER, 1000 },
+        { VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, 1000 },
+        { VK_DESCRIPTOR_TYPE_STORAGE_BUFFER, 1000 },
+        { VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER_DYNAMIC, 1000 },
+        { VK_DESCRIPTOR_TYPE_STORAGE_BUFFER_DYNAMIC, 1000 },
+        { VK_DESCRIPTOR_TYPE_INPUT_ATTACHMENT, 1000 }
+    };
+
+    VkDescriptorPoolCreateInfo pool_info{};
+    pool_info.sType         = VK_STRUCTURE_TYPE_DESCRIPTOR_POOL_CREATE_INFO;
+    pool_info.flags         = VK_DESCRIPTOR_POOL_CREATE_FREE_DESCRIPTOR_SET_BIT;
+    pool_info.maxSets       = 1000;
+    pool_info.poolSizeCount = std::size(pool_sizes);
+    pool_info.pPoolSizes    = pool_sizes;
+
+    VkDescriptorPool imgui_pool;
+    VK_CHECK(vkCreateDescriptorPool(_device, &pool_info, nullptr, &imgui_pool));
+
+    // 2. Initialize IMGUI library
+    ImGui::CreateContext();
+    ImGui_ImplSDL2_InitForVulkan(_window);
+
+    ImGui_ImplVulkan_InitInfo imgui_init_info{};
+    imgui_init_info.Instance        = _instance;
+    imgui_init_info.PhysicalDevice  = _chosen_gpu;
+    imgui_init_info.Device          = _device;
+    imgui_init_info.Queue           = _graphics_queue;
+    imgui_init_info.DescriptorPool  = imgui_pool;
+    imgui_init_info.MinImageCount   = 3;
+    imgui_init_info.ImageCount      = 3;
+    imgui_init_info.MSAASamples     = VK_SAMPLE_COUNT_1_BIT;
+
+    ImGui_ImplVulkan_Init(&imgui_init_info, _render_pass);
+    ImmediateSubmit([&](VkCommandBuffer command_buffer)
+        {
+            ImGui_ImplVulkan_CreateFontsTexture(command_buffer);
+        });
+
+    ImGui_ImplVulkan_DestroyFontUploadObjects(); // Clear font textures from cpu data
+
+    _main_deletion_queue.PushFunction([=]()
+        {
+            vkDestroyDescriptorPool(_device, imgui_pool, nullptr);
+            ImGui_ImplVulkan_Shutdown();
+        });
+
 }
