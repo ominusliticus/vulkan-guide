@@ -38,8 +38,8 @@
 
 // IMGUI libraries
 #include <imgui.h>
-#include <imgui_impl_sdl.h>
-#include <imgui_impl_vulkan.h>
+#include <backends/imgui_impl_sdl.h>
+#include <backends/imgui_impl_vulkan.h>
 
 
 void VulkanEngine::Init()
@@ -245,7 +245,7 @@ void VulkanEngine::Run()
         int x, y;
         SDL_PumpEvents();
         uint32_t button = SDL_GetMouseState(&x, &y);
-        //std::cout << "Mouse is at: ( " << x << " , " << y << " )\n";
+        std::cout << "Mouse is at: ( " << x << " , " << y << " )\n";
         _camera.UpdateRotation(x, y, _window_extent);
 
         // IMGUI frame
